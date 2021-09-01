@@ -11,6 +11,8 @@ dependencies:
     sdk: flutter
   json_annotation: ^4.0.1
   http: ^0.13.3
+  flutter_bloc: ^7.2.0
+  equatable: ^2.0.3
 
 dev_dependencies:
   flutter_test:

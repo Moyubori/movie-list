@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_recruitment_task/models/movie.dart';
 import 'package:flutter_recruitment_task/pages/movie_list/movie_card.dart';
+import 'package:flutter_recruitment_task/pages/movie_list/movie_list_cubit.dart';
 import 'package:flutter_recruitment_task/pages/movie_list/search_box.dart';
-import 'package:flutter_recruitment_task/services/api_service.dart';
+import 'package:flutter_recruitment_task/utils/data_loading_state.dart';
 
 class MovieListPage extends StatefulWidget {
   @override
@@ -10,9 +12,7 @@ class MovieListPage extends StatefulWidget {
 }
 
 class _MovieListPage extends State<MovieListPage> {
-  final apiService = ApiService();
-
-  Future<List<Movie>> _movieList = Future.value([]);
+  late final MovieListCubit _cubit = MovieListCubit();
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -27,29 +27,33 @@ class _MovieListPage extends State<MovieListPage> {
           ],
           title: Text('Movie Browser'),
         ),
-        body: Column(
-          children: <Widget>[
-            SearchBox(onSubmitted: _onSearchBoxSubmitted),
-            Expanded(child: _buildContent()),
-          ],
-        ),
+        body: BlocBuilder<MovieListCubit, MovieListState>(
+            bloc: _cubit,
+            builder: (BuildContext context, MovieListState state) {
+              return Column(
+                children: <Widget>[
+                  SearchBox(
+                      onSubmitted: (String query) =>
+                          _cubit.fetch(query: query)),
+                  Expanded(child: _buildContent(state)),
+                ],
+              );
+            }),
       );
 
-  Widget _buildContent() => FutureBuilder<List<Movie>>(
-      future: _movieList,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Container(
-            padding: EdgeInsets.all(16.0),
-            alignment: Alignment.center,
-            child: Text(snapshot.error.toString()),
-          );
-        } else {
-          return _buildMoviesList(snapshot.data ?? []);
-        }
-      });
+  Widget _buildContent(MovieListState state) {
+    if (state.loadingState == DataLoadingState.loading) {
+      return Center(child: CircularProgressIndicator());
+    } else if (state.loadingState == DataLoadingState.failed) {
+      return Container(
+        padding: EdgeInsets.all(16.0),
+        alignment: Alignment.center,
+        child: Text("Failed loading movies..."),
+      );
+    } else {
+      return _buildMoviesList(state.movies);
+    }
+  }
 
   Widget _buildMoviesList(List<Movie> movies) => ListView.separated(
         separatorBuilder: (context, index) => Container(
@@ -63,14 +67,4 @@ class _MovieListPage extends State<MovieListPage> {
         ),
         itemCount: movies.length,
       );
-
-  void _onSearchBoxSubmitted(String text) {
-    setState(() {
-      if (text.isNotEmpty) {
-        _movieList = apiService.searchMovies(text);
-      } else {
-        _movieList = Future.value([]);
-      }
-    });
-  }
 }
