@@ -22,7 +22,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
   @override
   void initState() {
     super.initState();
-    _cubit.fetchDetails(widget.movie.id);
+    _cubit.fetchDetails(id: widget.movie.id);
   }
 
   @override

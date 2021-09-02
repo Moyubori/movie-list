@@ -24,10 +24,6 @@ void main() {
   setUp(() {
     cubit = MovieListCubit();
 
-    cubit.stream.listen((event) {
-      print(event);
-    });
-
     moviesRepository = MoviesRepositoryMock();
     locator.registerSingleton<MoviesRepository>(moviesRepository);
     when(() =>
@@ -59,7 +55,7 @@ void main() {
       ),
     );
 
-    cubit.fetch(query: 'query');
+    cubit.fetchMovies(query: 'query');
   });
 
   test(
@@ -81,6 +77,6 @@ void main() {
       ),
     );
 
-    cubit.fetch(query: 'query');
+    cubit.fetchMovies(query: 'query');
   });
 }

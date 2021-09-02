@@ -40,6 +40,6 @@ class MoviesRepository {
   bool hasCachedMovieDetails({required int id}) =>
       movieDetailsCache.keys.contains(id);
 
-  MovieDetails getCachedMovieDetails({required int id}) =>
-      movieDetailsCache[id]!;
+  MovieDetails? getCachedMovieDetails({required int id}) =>
+      movieDetailsCache[id];
 }

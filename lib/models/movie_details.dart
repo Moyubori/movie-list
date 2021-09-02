@@ -9,7 +9,7 @@ class MovieDetails extends Equatable {
   final int budget;
   final int revenue;
 
-  MovieDetails(this.id, this.budget, this.revenue);
+  MovieDetails({required this.id, required this.budget, required this.revenue});
 
   factory MovieDetails.fromJson(Map<String, dynamic> json) =>
       _$MovieDetailsFromJson(json);

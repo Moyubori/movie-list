@@ -11,7 +11,7 @@ class ApiService {
   static const baseUrl = 'api.themoviedb.org';
   static const apiPath = '/3';
 
-  Future<dynamic> executeGET(
+  Future<dynamic> _executeGET(
       {required String path, Map<String, String>? queryParameters}) async {
     final Uri uri = Uri(
       scheme: scheme,
@@ -24,7 +24,7 @@ class ApiService {
   }
 
   Future<List<Movie>> searchMovies(String query) async {
-    final json = await executeGET(
+    final json = await _executeGET(
       path: 'search/movie',
       queryParameters: {'query': query},
     );
@@ -35,7 +35,7 @@ class ApiService {
   }
 
   Future<MovieDetails> fetchMovieDetails(int id) async {
-    final json = await executeGET(path: 'movie/$id');
+    final json = await _executeGET(path: 'movie/$id');
     final MovieDetails movieDetails = MovieDetails.fromJson(json);
     return movieDetails;
   }

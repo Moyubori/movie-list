@@ -11,7 +11,7 @@ class MovieListCubit extends Cubit<MovieListState> {
 
   MovieListCubit() : super(MovieListState.initial());
 
-  Future<void> fetch({required String query}) async {
+  Future<void> fetchMovies({required String query}) async {
     try {
       if (query.isEmpty) {
         emit(MovieListState.initial());

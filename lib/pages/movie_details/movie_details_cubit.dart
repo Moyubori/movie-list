@@ -10,7 +10,7 @@ class MovieDetailsCubit extends Cubit<MovieDetailsState> {
 
   MovieDetailsCubit() : super(MovieDetailsState.initial());
 
-  Future<void> fetchDetails(int id) async {
+  Future<void> fetchDetails({required int id}) async {
     try {
       final Future<MovieDetails> movieDetailsFuture =
           _moviesRepository.fetchMovieDetails(id: id);
@@ -18,7 +18,7 @@ class MovieDetailsCubit extends Cubit<MovieDetailsState> {
       if (_moviesRepository.hasCachedMovieDetails(id: id)) {
         emit(
           MovieDetailsState.loaded(
-              movieDetails: _moviesRepository.getCachedMovieDetails(id: id)),
+              movieDetails: _moviesRepository.getCachedMovieDetails(id: id)!),
         );
       }
       final MovieDetails movieDetails = await movieDetailsFuture;

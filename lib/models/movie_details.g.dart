@@ -8,9 +8,9 @@ part of 'movie_details.dart';
 
 MovieDetails _$MovieDetailsFromJson(Map<String, dynamic> json) {
   return MovieDetails(
-    json['id'] as int,
-    json['budget'] as int,
-    json['revenue'] as int,
+    id: json['id'] as int,
+    budget: json['budget'] as int,
+    revenue: json['revenue'] as int,
   );
 }
 

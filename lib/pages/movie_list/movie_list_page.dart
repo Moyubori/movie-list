@@ -27,7 +27,7 @@ class _MovieListPage extends State<MovieListPage> {
                 children: <Widget>[
                   SearchBox(
                       onSubmitted: (String query) =>
-                          _cubit.fetch(query: query)),
+                          _cubit.fetchMovies(query: query)),
                   Expanded(child: _buildContent(state)),
                 ],
               );
