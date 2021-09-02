@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_recruitment_task/app/routes.dart' as routes;
 import 'package:flutter_recruitment_task/models/movie.dart';
 import 'package:flutter_recruitment_task/pages/movie_list/movie_card.dart';
 import 'package:flutter_recruitment_task/pages/movie_list/movie_list_cubit.dart';
@@ -17,14 +18,6 @@ class _MovieListPage extends State<MovieListPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          actions: [
-            IconButton(
-              icon: Icon(Icons.movie_creation_outlined),
-              onPressed: () {
-                //TODO implement navigation
-              },
-            ),
-          ],
           title: Text('Movie Browser'),
         ),
         body: BlocBuilder<MovieListCubit, MovieListState>(
@@ -60,11 +53,15 @@ class _MovieListPage extends State<MovieListPage> {
           height: 1.0,
           color: Colors.grey.shade300,
         ),
-        itemBuilder: (context, index) => MovieCard(
-          title: movies[index].title,
-          rating: '${(movies[index].voteAverage * 10).toInt()}%',
-          onTap: () {},
-        ),
+        itemBuilder: (BuildContext context, int index) {
+          final Movie movie = movies[index];
+          return MovieCard(
+            title: movie.title,
+            rating: '${(movie.voteAverage * 10).toInt()}%',
+            onTap: () =>
+                Navigator.pushNamed(context, routes.details, arguments: movie),
+          );
+        },
         itemCount: movies.length,
       );
 }

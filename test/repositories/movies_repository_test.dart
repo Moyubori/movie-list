@@ -31,13 +31,13 @@ void main() {
 
   group('searchMovies()', () {
     test('should call API, cache the results, and return them', () async {
-      expect(moviesRepository.moviesCache.length, 0);
+      expect(moviesRepository.searchResultsCache.length, 0);
 
       final List<Movie> movies =
           await moviesRepository.searchMovies(query: "Hello World!");
 
       verify(() => apiServiceMock.searchMovies(any<String>()));
-      expect(moviesRepository.moviesCache.length, 1);
+      expect(moviesRepository.searchResultsCache.length, 1);
       expect(movies, mockMovies);
     });
   });
@@ -53,7 +53,7 @@ void main() {
     test('should return cached results when cache contains the query', () {
       final String query = "Hello World!";
 
-      moviesRepository.moviesCache[query] = mockMovies;
+      moviesRepository.searchResultsCache[query] = mockMovies;
 
       final List<Movie> movies =
           moviesRepository.getCachedSearchResults(query: query);
@@ -73,7 +73,7 @@ void main() {
     test('should return true when cache contains the query', () {
       final String query = "Hello World!";
 
-      moviesRepository.moviesCache[query] = mockMovies;
+      moviesRepository.searchResultsCache[query] = mockMovies;
 
       final bool hasResults =
           moviesRepository.hasCachedSearchResults(query: query);
