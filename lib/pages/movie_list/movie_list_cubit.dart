@@ -12,23 +12,28 @@ class MovieListCubit extends Cubit<MovieListState> {
   MovieListCubit() : super(MovieListState.initial());
 
   Future<void> fetch({required String query}) async {
-    if (query.isEmpty) {
-      emit(MovieListState.initial());
-    } else {
-      final Future<List<Movie>> movieListFuture =
-          _moviesRepository.searchMovies(query: query);
-      emit(MovieListState.loading());
-      if (_moviesRepository.hasCachedSearchResults(query: query)) {
-        emit(
-          MovieListState.loaded(
-            movies: _moviesRepository.getCachedSearchResults(query: query)
-              ..sortByRating(descending: true),
-          ),
-        );
+    try {
+      if (query.isEmpty) {
+        emit(MovieListState.initial());
+      } else {
+        final Future<List<Movie>> movieListFuture =
+            _moviesRepository.searchMovies(query: query);
+        emit(MovieListState.loading());
+        if (_moviesRepository.hasCachedSearchResults(query: query)) {
+          emit(
+            MovieListState.loaded(
+              movies: _moviesRepository.getCachedSearchResults(query: query)
+                ..sortByRating(descending: true),
+            ),
+          );
+        }
+        final List<Movie> fetchedMovies = await movieListFuture;
+        emit(MovieListState.loaded(
+            movies: fetchedMovies..sortByRating(descending: true)));
       }
-      final List<Movie> fetchedMovies = await movieListFuture;
-      emit(MovieListState.loaded(
-          movies: fetchedMovies..sortByRating(descending: true)));
+    } catch (e) {
+      emit(MovieListState.failed());
+      rethrow;
     }
   }
 }
