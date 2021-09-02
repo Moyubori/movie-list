@@ -57,7 +57,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                   const Divider(),
                   _DetailTile(
                     title: 'Should I watch it today?',
-                    content: 'Yes',
+                    content: state.isRecommended ? 'Yes' : 'No',
                   ),
                   const Divider(),
                 ],

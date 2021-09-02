@@ -8,7 +8,7 @@ import 'package:mocktail/mocktail.dart';
 import '../../mocks.dart';
 
 void main() {
-  late MoviesRepositoryMock moviesRepository;
+  late MoviesRepositoryMock moviesRepositoryMock;
 
   final List<Movie> cachedMockMovies = [
     Movie(title: 'movie1', voteAverage: 0.42, id: 1),
@@ -24,10 +24,10 @@ void main() {
   setUp(() {
     cubit = MovieListCubit();
 
-    moviesRepository = MoviesRepositoryMock();
-    locator.registerSingleton<MoviesRepository>(moviesRepository);
-    when(() =>
-            moviesRepository.searchMovies(query: any<String>(named: 'query')))
+    moviesRepositoryMock = MoviesRepositoryMock();
+    locator.registerSingleton<MoviesRepository>(moviesRepositoryMock);
+    when(() => moviesRepositoryMock.searchMovies(
+            query: any<String>(named: 'query')))
         .thenAnswer((_) async => mockMovies);
   });
 
@@ -42,7 +42,7 @@ void main() {
   test(
       'should emit loading and loaded states when fetching with no results cached',
       () {
-    when(() => moviesRepository.hasCachedSearchResults(
+    when(() => moviesRepositoryMock.hasCachedSearchResults(
         query: any<String>(named: 'query'))).thenReturn(false);
 
     expectLater(
@@ -61,9 +61,9 @@ void main() {
   test(
       'should emit loading and two loaded states when fetching with results cached',
       () {
-    when(() => moviesRepository.hasCachedSearchResults(
+    when(() => moviesRepositoryMock.hasCachedSearchResults(
         query: any<String>(named: 'query'))).thenReturn(true);
-    when(() => moviesRepository.getCachedSearchResults(
+    when(() => moviesRepositoryMock.getCachedSearchResults(
         query: any<String>(named: 'query'))).thenReturn(cachedMockMovies);
 
     expectLater(

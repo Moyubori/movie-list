@@ -1,6 +1,7 @@
 import 'package:flutter_recruitment_task/models/movie_details.dart';
 import 'package:flutter_recruitment_task/pages/movie_details/movie_details_cubit.dart';
 import 'package:flutter_recruitment_task/repositories/movies_repository.dart';
+import 'package:flutter_recruitment_task/services/recommendations_service.dart';
 import 'package:flutter_recruitment_task/utils/locator.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -8,7 +9,8 @@ import 'package:mocktail/mocktail.dart';
 import '../../mocks.dart';
 
 void main() {
-  late MoviesRepositoryMock moviesRepository;
+  late MoviesRepositoryMock moviesRepositoryMock;
+  late RecommendationsServiceMock recommendationsServiceMock;
 
   final MovieDetails mockDetails = MovieDetails(
     id: 1,
@@ -27,10 +29,19 @@ void main() {
   setUp(() {
     cubit = MovieDetailsCubit();
 
-    moviesRepository = MoviesRepositoryMock();
-    locator.registerSingleton<MoviesRepository>(moviesRepository);
-    when(() => moviesRepository.fetchMovieDetails(id: any<int>(named: 'id')))
+    moviesRepositoryMock = MoviesRepositoryMock();
+    recommendationsServiceMock = RecommendationsServiceMock();
+    locator.registerSingleton<MoviesRepository>(moviesRepositoryMock);
+    locator
+        .registerSingleton<RecommendationsService>(recommendationsServiceMock);
+
+    registerFallbackValue<MovieDetails>(mockDetails);
+    when(() =>
+            moviesRepositoryMock.fetchMovieDetails(id: any<int>(named: 'id')))
         .thenAnswer((_) async => mockDetails);
+    when(() => recommendationsServiceMock.isMovieRecommended(
+            movieDetails: any<MovieDetails>(named: 'movieDetails')))
+        .thenAnswer((_) async => false);
   });
 
   tearDown(() async {
@@ -44,16 +55,16 @@ void main() {
   test(
       'should emit loading and loaded states when fetching with no results cached',
       () {
-    when(() =>
-            moviesRepository.hasCachedMovieDetails(id: any<int>(named: 'id')))
-        .thenReturn(false);
+    when(() => moviesRepositoryMock.hasCachedMovieDetails(
+        id: any<int>(named: 'id'))).thenReturn(false);
 
     expectLater(
       cubit.stream,
       emitsInOrder(
         [
           MovieDetailsState.loading(),
-          MovieDetailsState.loaded(movieDetails: mockDetails),
+          MovieDetailsState.loaded(
+              movieDetails: mockDetails, isRecommended: false),
         ],
       ),
     );
@@ -64,20 +75,20 @@ void main() {
   test(
       'should emit loading and two loaded states when fetching with results cached',
       () {
-    when(() =>
-            moviesRepository.hasCachedMovieDetails(id: any<int>(named: 'id')))
-        .thenReturn(true);
-    when(() =>
-            moviesRepository.getCachedMovieDetails(id: any<int>(named: 'id')))
-        .thenReturn(cachedMockDetails);
+    when(() => moviesRepositoryMock.hasCachedMovieDetails(
+        id: any<int>(named: 'id'))).thenReturn(true);
+    when(() => moviesRepositoryMock.getCachedMovieDetails(
+        id: any<int>(named: 'id'))).thenReturn(cachedMockDetails);
 
     expectLater(
       cubit.stream,
       emitsInOrder(
         [
           MovieDetailsState.loading(),
-          MovieDetailsState.loaded(movieDetails: cachedMockDetails),
-          MovieDetailsState.loaded(movieDetails: mockDetails),
+          MovieDetailsState.loaded(
+              movieDetails: cachedMockDetails, isRecommended: false),
+          MovieDetailsState.loaded(
+              movieDetails: mockDetails, isRecommended: false),
         ],
       ),
     );
