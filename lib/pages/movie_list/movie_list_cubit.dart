@@ -3,10 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_recruitment_task/models/movie.dart';
 import 'package:flutter_recruitment_task/repositories/movies_repository.dart';
 import 'package:flutter_recruitment_task/utils/data_loading_state.dart';
+import 'package:flutter_recruitment_task/utils/locator.dart';
 import 'package:flutter_recruitment_task/utils/movie_list_extension.dart';
 
 class MovieListCubit extends Cubit<MovieListState> {
-  late final MoviesRepository _moviesRepository = MoviesRepository();
+  late final MoviesRepository _moviesRepository = locator.get();
 
   MovieListCubit() : super(MovieListState.initial());
 
