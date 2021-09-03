@@ -6,7 +6,7 @@ class MovieApp extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp(
         title: 'Movie Browser',
         theme: ThemeData(primarySwatch: Colors.amber),
-        initialRoute: '/',
+        initialRoute: root,
         routes: routes,
       );
 }

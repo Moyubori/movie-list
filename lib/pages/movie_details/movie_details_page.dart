@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_recruitment_task/models/movie.dart';
+import 'package:flutter_recruitment_task/models/movie_details.dart';
 import 'package:flutter_recruitment_task/pages/movie_details/movie_details_cubit.dart';
 import 'package:flutter_recruitment_task/utils/data_loading_state.dart';
 import 'package:intl/intl.dart';
@@ -43,16 +44,17 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                 child: Text("Failed loading movie details..."),
               );
             } else if (state.loadingState == DataLoadingState.loaded) {
+              final MovieDetails movieDetails = state.movieDetails!;
               return Column(
                 children: [
                   _DetailTile(
                     title: 'Budget',
-                    content: _moneyFormat.format(state.movieDetails!.budget),
+                    content: _moneyFormat.format(movieDetails.budget),
                   ),
                   const Divider(),
                   _DetailTile(
                     title: 'Revenue',
-                    content: _moneyFormat.format(state.movieDetails!.revenue),
+                    content: _moneyFormat.format(movieDetails.revenue),
                   ),
                   const Divider(),
                   _DetailTile(
